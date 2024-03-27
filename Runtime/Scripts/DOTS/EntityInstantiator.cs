@@ -273,7 +273,7 @@ namespace GLTFast {
                     MaterialMeshInfo.FromRenderMeshArrayIndices(
                         index,
                         0,
-                        (sbyte)index
+                        (ushort)index
                         )
                     );
 
@@ -381,7 +381,7 @@ namespace GLTFast {
                         m_EntityManager,
                         renderMeshDescription,
                         renderMeshArray,
-                        MaterialMeshInfo.FromRenderMeshArrayIndices(index, 0, (sbyte) index)
+                        MaterialMeshInfo.FromRenderMeshArrayIndices(index, 0, (ushort) index)
                     );
                 }
 
