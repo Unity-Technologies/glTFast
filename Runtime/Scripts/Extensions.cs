@@ -49,6 +49,10 @@ namespace GLTFast
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_clearcoat">KHR_materials_clearcoat</a> glTF extension
         /// </summary>
         MaterialsClearcoat,
+        /// <summary>
+        /// <see href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_animation_pointer/README.md">KHR_animation_pointer</see> glTF extension
+        /// </summary>
+        AnimationPointer,
     }
 
     /// <summary>
@@ -100,6 +104,10 @@ namespace GLTFast
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_clearcoat">KHR_materials_clearcoat</a> glTF extension
         /// </summary>
         public const string MaterialsClearcoat = "KHR_materials_clearcoat";
+        /// <summary>
+        /// <see href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_animation_pointer/README.md">KHR_animation_pointer</see> glTF extension
+        /// </summary>
+        public const string AnimationPointer = "KHR_animation_pointer";
 
         /// <summary>
         /// Returns the official name of the glTF extension
@@ -110,6 +118,8 @@ namespace GLTFast
         {
             switch (extension)
             {
+                case Extension.AnimationPointer:
+                    return AnimationPointer;
                 case Extension.DracoMeshCompression:
                     return DracoMeshCompression;
                 case Extension.LightsPunctual:

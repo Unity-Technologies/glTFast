@@ -23,6 +23,8 @@ namespace GLTFast.Schema
 
         AnimationChannel.Path m_Path;
 
+        public AnimationChannelExtensions extensions;
+
         public AnimationChannel.Path GetPath() {
             if (m_Path != AnimationChannel.Path.Unknown)
             {
@@ -38,6 +40,26 @@ namespace GLTFast.Schema
 #pragma warning restore CS0618 // Type or member is obsolete
             return m_Path;
         }
+
+        internal void GltfSerialize(JsonWriter writer) {
+            throw new NotImplementedException($"GltfSerialize missing on {GetType()}");
+        }
+    }
+
+    [Serializable]
+    public class AnimationChannelExtensions
+    {
+        public AnimationPointer KHR_animation_pointer;
+
+        internal void GltfSerialize(JsonWriter writer) {
+            throw new NotImplementedException($"GltfSerialize missing on {GetType()}");
+        }
+    }
+
+    [Serializable]
+    public class AnimationPointer
+    {
+        public string pointer;
 
         internal void GltfSerialize(JsonWriter writer) {
             throw new NotImplementedException($"GltfSerialize missing on {GetType()}");
