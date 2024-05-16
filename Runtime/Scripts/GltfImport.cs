@@ -2161,57 +2161,65 @@ namespace GLTFast
 
                         switch (channel.Target.GetPath()) {
                             case AnimationChannel.Path.Translation: {
-                                var values= ((AccessorNativeData<Vector3>) m_AccessorData[sampler.output]).data;
-                                AnimationUtils.AddTranslationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                                if(sampler?.output != null && m_AccessorData[sampler.output] != null) {
+                                    var values= ((AccessorNativeData<Vector3>) m_AccessorData[sampler.output]).data;
+                                    AnimationUtils.AddTranslationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                                }                                
                                 break;
                             }
                             case AnimationChannel.Path.Rotation: {
-                                var values= ((AccessorNativeData<Quaternion>) m_AccessorData[sampler.output]).data;
-                                AnimationUtils.AddRotationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                                if(sampler?.output != null && m_AccessorData[sampler.output] != null) {
+                                    var values= ((AccessorNativeData<Quaternion>) m_AccessorData[sampler.output]).data;
+                                    AnimationUtils.AddRotationCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                                }
                                 break;
                             }
                             case AnimationChannel.Path.Scale: {
-                                var values= ((AccessorNativeData<Vector3>) m_AccessorData[sampler.output]).data;
-                                AnimationUtils.AddScaleCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                                if(sampler?.output != null && m_AccessorData[sampler.output] != null) {
+                                    var values= ((AccessorNativeData<Vector3>) m_AccessorData[sampler.output]).data;
+                                    AnimationUtils.AddScaleCurves(m_AnimationClips[i], path, times, values, sampler.GetInterpolationType());
+                                }
                                 break;
                             }
                             case AnimationChannel.Path.Weights: {
-                                var values= ((AccessorNativeData<float>) m_AccessorData[sampler.output]).data;
-                                var node = Root.Nodes[channel.Target.node];
-                                if (node.mesh < 0 || node.mesh >= Root.Meshes.Count) {
-                                    break;
-                                }
-                                var mesh = Root.Meshes[node.mesh];
-                                AnimationUtils.AddMorphTargetWeightCurves(
-                                    m_AnimationClips[i],
-                                    path,
-                                    times,
-                                    values,
-                                    sampler.GetInterpolationType(),
-                                    mesh.Extras?.targetNames
-                                    );
-
-                                // HACK BEGIN:
-                                // Since meshes with multiple primitives that are not using
-                                // identical vertex buffers are split up into separate Unity
-                                // Meshes. Because of this, we have to duplicate the animation
-                                // curves, so that all primitives are animated.
-                                // TODO: Refactor primitive sub-meshing and remove this hack
-                                // https://github.com/atteneder/glTFast/issues/153
-                                var meshName = string.IsNullOrEmpty(mesh.name) ? k_PrimitiveName : mesh.name;
-                                var primitiveCount = m_MeshPrimitiveIndex[node.mesh + 1] - m_MeshPrimitiveIndex[node.mesh];
-                                for (var k = 1; k < primitiveCount; k++) {
-                                    var primitiveName = $"{meshName}_{k}";
+                                if(sampler?.output != null && m_AccessorData[sampler.output] != null) {
+                                    var values= ((AccessorNativeData<float>) m_AccessorData[sampler.output]).data;
+                                    var node = Root.Nodes[channel.Target.node];
+                                    if (node.mesh < 0 || node.mesh >= Root.Meshes.Count) {
+                                        break;
+                                    }
+                                    var mesh = Root.Meshes[node.mesh];
                                     AnimationUtils.AddMorphTargetWeightCurves(
                                         m_AnimationClips[i],
-                                        $"{path}/{primitiveName}",
+                                        path,
                                         times,
                                         values,
                                         sampler.GetInterpolationType(),
                                         mesh.Extras?.targetNames
-                                    );
+                                        );
+    
+                                    // HACK BEGIN:
+                                    // Since meshes with multiple primitives that are not using
+                                    // identical vertex buffers are split up into separate Unity
+                                    // Meshes. Because of this, we have to duplicate the animation
+                                    // curves, so that all primitives are animated.
+                                    // TODO: Refactor primitive sub-meshing and remove this hack
+                                    // https://github.com/atteneder/glTFast/issues/153
+                                    var meshName = string.IsNullOrEmpty(mesh.name) ? k_PrimitiveName : mesh.name;
+                                    var primitiveCount = m_MeshPrimitiveIndex[node.mesh + 1] - m_MeshPrimitiveIndex[node.mesh];
+                                    for (var k = 1; k < primitiveCount; k++) {
+                                        var primitiveName = $"{meshName}_{k}";
+                                        AnimationUtils.AddMorphTargetWeightCurves(
+                                            m_AnimationClips[i],
+                                            $"{path}/{primitiveName}",
+                                            times,
+                                            values,
+                                            sampler.GetInterpolationType(),
+                                            mesh.Extras?.targetNames
+                                        );
+                                    }
+                                    // HACK END
                                 }
-                                // HACK END
                                 break;
                             }
                             case AnimationChannel.Path.Pointer:
