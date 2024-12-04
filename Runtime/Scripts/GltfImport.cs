@@ -1872,6 +1872,21 @@ namespace GLTFast
             return true;
         }
 
+        unsafe void* GetZeroBuffer(int bytes)
+        {
+            byte[] zeroBuffer = new byte[bytes];
+            // Fill with zeros
+            for (int i = 0; i < bytes; i++)
+            {
+                zeroBuffer[i] = 0;
+            }
+        
+            fixed (byte* bufferAddress = &zeroBuffer[0])
+            {
+                return bufferAddress;
+            }
+        }
+
         byte[] GetBuffer(int index)
         {
             return m_Buffers[index];
@@ -4105,8 +4120,14 @@ namespace GLTFast
             accessor = Root.Accessors[index];
             if (accessor.bufferView < 0 || accessor.bufferView >= Root.BufferViews.Count)
             {
-                data = null;
-                byteStride = 0;
+                if (accessor.IsSparse)
+                {
+                    data = null;
+                    byteStride = 0;
+                    return;
+                }
+                data = GetZeroBuffer(accessor.ByteSize);
+                byteStride = AccessorBase.GetComponentTypeSize(accessor.componentType);
                 return;
             }
             var bufferView = Root.BufferViews[accessor.bufferView];
