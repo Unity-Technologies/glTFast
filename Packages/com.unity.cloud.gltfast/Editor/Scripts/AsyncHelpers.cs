@@ -20,25 +20,32 @@ namespace GLTFast.Utils
             var sync = new ExclusiveSynchronizationContext();
             SynchronizationContext.SetSynchronizationContext(sync);
             // ReSharper disable once AsyncVoidLambda
-            sync.Post(async _ =>
+            try
             {
-                try
+                sync.Post(async _ =>
                 {
-                    await task();
-                }
-                catch (Exception e)
-                {
-                    sync.InnerException = e;
-                    throw;
-                }
-                finally
-                {
-                    sync.EndMessageLoop();
-                }
-            }, null);
-            sync.BeginMessageLoop();
-
-            SynchronizationContext.SetSynchronizationContext(oldContext);
+                    try
+                    {
+                        await task();
+                    }
+                    catch (Exception e)
+                    {
+                        sync.InnerException = e;
+                        throw;
+                    }
+                    finally
+                    {
+                        sync.EndMessageLoop();
+                    }
+                }, null);
+                
+                sync.BeginMessageLoop();
+            }
+            finally
+            {
+                // Always restore the old context, even if there's an exception
+                SynchronizationContext.SetSynchronizationContext(oldContext);
+            }
         }
 
         /// <summary>
@@ -54,24 +61,32 @@ namespace GLTFast.Utils
             SynchronizationContext.SetSynchronizationContext(sync);
             T ret = default(T);
             // ReSharper disable once AsyncVoidLambda
-            sync.Post(async _ =>
+            try
             {
-                try
+                sync.Post(async _ =>
                 {
-                    ret = await task();
-                }
-                catch (Exception e)
-                {
-                    sync.InnerException = e;
-                    throw;
-                }
-                finally
-                {
-                    sync.EndMessageLoop();
-                }
-            }, null);
-            sync.BeginMessageLoop();
-            SynchronizationContext.SetSynchronizationContext(oldContext);
+                    try
+                    {
+                        ret = await task();
+                    }
+                    catch (Exception e)
+                    {
+                        sync.InnerException = e;
+                        throw;
+                    }
+                    finally
+                    {
+                        sync.EndMessageLoop();
+                    }
+                }, null);
+
+                sync.BeginMessageLoop();
+            }
+            finally
+            {
+                // Always restore the old context, even if there's an exception
+                SynchronizationContext.SetSynchronizationContext(oldContext);
+            }
             return ret;
         }
 
